@@ -7,5 +7,4 @@ public class Interactable : MonoBehaviour
     {
         Debug.Log("Объект " + gameObject.name + " использован");
     }
-
 }

@@ -17,6 +17,7 @@ public class Player : MonoBehaviour
     private SpriteRenderer sprite;
 
     public LayerMask wallsLayer;
+    public LayerMask interactableLayer;
     /*private States State//функция для смены состояний
     {
         get { return (States)anim.GetInteger("State"); }
@@ -41,6 +42,7 @@ public class Player : MonoBehaviour
             Jump();
         if (Input.GetKeyDown(KeyCode.W))
         {
+            Debug.Log("использование");
             Interact();
         }
     }
@@ -96,11 +98,12 @@ public class Player : MonoBehaviour
 
     private void Interact()
     {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, 0.3f);
-        if (hit.collider != null)
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, 0.3f, interactableLayer);
+        if (hits.Length > 0)
         {
-            Interactable interactable = hit.collider.GetComponent<Interactable>();
-            if (interactable != null && interactable.isInteractable)
+            // Взаимодействуем с первым найденным объектом
+            Interactable interactable = hits[0].GetComponent<Interactable>();
+            if (interactable != null)
             {
                 interactable.Use();
             }
