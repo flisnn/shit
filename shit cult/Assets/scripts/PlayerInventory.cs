@@ -1,18 +1,20 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class PlayerInventory : MonoBehaviour
 {
     public static PlayerInventory Instance;
 
     [Header("Настройки")]
-    [SerializeField] private GameObject[] itemPrefabs; // Префабы товаров
-    [SerializeField] private Vector3 offset = new Vector3(1f, 0.5f, 0f); // Смещение от игрока
-    [SerializeField] private float followSpeed = 5f;   // Скорость следования
-    [SerializeField] private float hoverAmplitude = 0.2f; // Амплитуда “парения”
-    [SerializeField] private float hoverFrequency = 2f;   // Частота “парения”
+    [SerializeField] private GameObject[] itemPrefabs;  // Префабы товаров
+    [SerializeField] public Vector3 offset = new Vector3(0f, 2f, 0f); // Нижний элемент башни
+    [SerializeField] private float followSpeed = 5f;    // Скорость следования
+    [SerializeField] private float hoverAmplitude = 0.2f; // Амплитуда парения
+    [SerializeField] private float hoverFrequency = 2f;   // Частота парения
+    [SerializeField] public float itemHeight = 0.6f;   // Расстояние между предметами в башне
 
-    private int currentItemIndex = -1;
-    private GameObject heldItemObject;
+    public List<GameObject> heldItems = new List<GameObject>(); // Все предметы игрока
+    private List<int> currentItemIndices = new List<int>();     // Их индексы (для логики)
 
     private void Awake()
     {
@@ -22,55 +24,66 @@ public class PlayerInventory : MonoBehaviour
 
     private void Update()
     {
-        // Взятие товара
+        // Взятие предмета
         if (Input.GetKeyDown(KeyCode.Alpha1)) TryTakeItem(0);
         if (Input.GetKeyDown(KeyCode.Alpha2)) TryTakeItem(1);
         if (Input.GetKeyDown(KeyCode.Alpha3)) TryTakeItem(2);
         if (Input.GetKeyDown(KeyCode.Alpha4)) TryTakeItem(3);
 
-        UpdateItemFollow();
+        UpdateItemsFollow();
     }
 
     public void TryTakeItem(int index)
     {
-        if (currentItemIndex != -1)
-        {
-            Debug.Log("Уже несем товар, нельзя взять другой.");
-            return;
-        }
-
         if (index < 0 || index >= itemPrefabs.Length) return;
 
-        heldItemObject = Instantiate(itemPrefabs[index], transform.position + offset, Quaternion.identity);
-        currentItemIndex = index;
-        Debug.Log($"Взяли товар {index}");
+        // Определяем высоту для нового предмета (над последним)
+        Vector3 spawnPos = transform.position + offset + Vector3.up * (heldItems.Count * itemHeight);
+
+        GameObject newItem = Instantiate(itemPrefabs[index], spawnPos, Quaternion.identity);
+        heldItems.Add(newItem);
+        currentItemIndices.Add(index);
+
+        Debug.Log($"Взяли товар {index}. Сейчас в башне: {heldItems.Count}");
     }
 
-    private void UpdateItemFollow()
+    public void UpdateItemsFollow()
     {
-        if (heldItemObject == null) return;
+        for (int i = 0; i < heldItems.Count; i++)
+        {
+            GameObject item = heldItems[i];
+            if (item == null) continue;
 
-        // Целевая позиция (рядом с игроком)
-        Vector3 targetPos = transform.position + offset;
+            // Целевая позиция для этого предмета
+            Vector3 targetPos = transform.position + offset + Vector3.up * (i * itemHeight);
+            targetPos.y += Mathf.Sin(Time.time * hoverFrequency) * hoverAmplitude;
 
-        // Добавляем эффект парения
-        targetPos.y += Mathf.Sin(Time.time * hoverFrequency) * hoverAmplitude;
-
-        // Плавное движение к цели
-        heldItemObject.transform.position = Vector3.Lerp(
-            heldItemObject.transform.position,
-            targetPos,
-            Time.deltaTime * followSpeed
-        );
+            // Плавное движение к цели
+            item.transform.position = Vector3.Lerp(item.transform.position, targetPos, Time.deltaTime * followSpeed);
+        }
     }
 
-    public bool HasItem => currentItemIndex != -1;
-    public int CurrentItemIndex => currentItemIndex;
+    public bool HasItem => heldItems.Count > 0;
+    public List<int> CurrentItemIndices => new List<int>(currentItemIndices);
 
-    public void RemoveHeldItem()
+    // Убираем один предмет (например, для сдачи в магазин)
+    public void RemoveHeldItem(int index)
     {
-        if (heldItemObject != null) Destroy(heldItemObject);
-        heldItemObject = null;
-        currentItemIndex = -1;
+        if (index < 0 || index >= heldItems.Count) return;
+
+        Destroy(heldItems[index]);
+        heldItems.RemoveAt(index);
+        currentItemIndices.RemoveAt(index);
+    }
+
+    // Убираем все предметы
+    public void RemoveAllItems()
+    {
+        foreach (var item in heldItems)
+        {
+            if (item != null) Destroy(item);
+        }
+        heldItems.Clear();
+        currentItemIndices.Clear();
     }
 }
