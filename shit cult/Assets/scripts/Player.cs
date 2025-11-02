@@ -36,10 +36,13 @@ public class Player : MonoBehaviour
     }
     void Update()
     {
-        if (Input.GetButton("Horizontal"))
-            Run();
+        Run();
         if (isGrounded && Input.GetButtonDown("Jump"))
             Jump();
+        if (Input.GetKeyDown(KeyCode.W))
+        {
+            interact();
+        }
     }
     private void CheckFall() //проверка падения
     {
@@ -89,6 +92,19 @@ public class Player : MonoBehaviour
     private void Jump()//прыжок
     {
         rb.AddForce(transform.up * jumpforce, ForceMode2D.Impulse);
+    }
+
+    private void Interact()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, 0.3f);
+        if (hit.collider != null)
+        {
+            Interactable interactable = hit.collider.GetComponent<Interactable>();
+            if (interactable != null && interactable.isInteractable)
+            {
+                interactable.Use();
+            }
+        }
     }
 
     /*public enum States //состояния героя
