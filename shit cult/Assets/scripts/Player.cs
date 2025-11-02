@@ -41,7 +41,7 @@ public class Player : MonoBehaviour
             Jump();
         if (Input.GetKeyDown(KeyCode.W))
         {
-            interact();
+            Interact();
         }
     }
     private void CheckFall() //проверка падения
