@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 3
+  tags: []
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - Hero
+  - Water
+  - UI
+  - Walls
+  - Platforms
+  - Background
+  - Paralax
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: Paralax
+    uniqueID: 3858417799
+    locked: 0
+  - name: Background
+    uniqueID: 1876971989
+    locked: 0
+  - name: Platforms
+    uniqueID: 1977195557
+    locked: 0
+  - name: Walls
+    uniqueID: 538790237
+    locked: 0
+  - name: Hero
+    uniqueID: 2428089679
+    locked: 0
+  m_RenderingLayers:
+  - Default
+  - Hero
+  - Walls
+  - Platforms
+  - Background
+  - Paralax
