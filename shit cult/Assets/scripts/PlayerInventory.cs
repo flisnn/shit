@@ -12,6 +12,7 @@ public class PlayerInventory : MonoBehaviour
     [SerializeField] private float hoverAmplitude = 0.2f; // Амплитуда парения
     [SerializeField] private float hoverFrequency = 2f;   // Частота парения
     [SerializeField] public float itemHeight = 0.6f;   // Расстояние между предметами в башне
+    [SerializeField] private float intervalFollowSpeed = 0.1f;/// интервал скорости следования
 
     public List<GameObject> heldItems = new List<GameObject>(); // Все предметы игрока
     private List<int> currentItemIndices = new List<int>();     // Их индексы (для логики)
@@ -54,12 +55,17 @@ public class PlayerInventory : MonoBehaviour
             GameObject item = heldItems[i];
             if (item == null) continue;
 
-            // Целевая позиция для этого предмета
+            // Целевая позиция
             Vector3 targetPos = transform.position + offset + Vector3.up * (i * itemHeight);
             targetPos.y += Mathf.Sin(Time.time * hoverFrequency) * hoverAmplitude;
 
-            // Плавное движение к цели
-            item.transform.position = Vector3.Lerp(item.transform.position, targetPos, Time.deltaTime * followSpeed);
+            // Чем дальше предмет в списке, тем медленнее он движется
+            float speedMultiplier = 1f / (1f + i * intervalFollowSpeed);
+
+            float adjustedSpeed = followSpeed * speedMultiplier;
+
+            // Плавное движение
+            item.transform.position = Vector3.Lerp(item.transform.position, targetPos, Time.deltaTime * adjustedSpeed);
         }
     }
 
