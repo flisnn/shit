@@ -3,20 +3,23 @@ using System.Collections;
 
 public class BossRoomObject : Interactable
 {
-    public bool done = false;
+    public bool done = true;
     public Player playerScript;
     public PlayerInventory playerInventoryScript;
     [SerializeField] public Transform TPpositionPlayer;
     [SerializeField] public float cooldown = 2f;
     public override void Use()
     {
-        GameObject playerObj = GameObject.FindWithTag("Player");
-        playerScript = playerObj.GetComponent<Player>();
-        playerInventoryScript = playerObj.GetComponent<PlayerInventory>();
-        playerScript.isWork = true;
-        playerScript.speed = 0;
-        playerObj.transform.position = TPpositionPlayer.position;
-        StartCoroutine(Working());
+        if (!done)
+        {
+            GameObject playerObj = GameObject.FindWithTag("Player");
+            playerScript = playerObj.GetComponent<Player>();
+            playerInventoryScript = playerObj.GetComponent<PlayerInventory>();
+            playerScript.isWork = true;
+            playerScript.speed = 0;
+            playerObj.transform.position = TPpositionPlayer.position;
+            StartCoroutine(Working());
+        }
     }
     private IEnumerator Working()
     {

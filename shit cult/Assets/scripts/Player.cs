@@ -19,11 +19,11 @@ public class Player : MonoBehaviour
 
     public LayerMask wallsLayer;
     public LayerMask interactableLayer;
-    /*private States State//функция для смены состояний
+    private States State//функция для смены состояний
     {
         get { return (States)anim.GetInteger("State"); }
         set { anim.SetInteger("State", (int)value); }
-    }*/
+    }
     private void Awake() //функция которая вызывает другие функции еще до начала программы
     {
         rb = GetComponent<Rigidbody2D>();
@@ -40,25 +40,27 @@ public class Player : MonoBehaviour
     {
         if (!isWork)
         {
+            if (speed == 0 && isGrounded) State = States.idle;
             Run();
             if (isGrounded && Input.GetButtonDown("Jump"))
                 Jump();
             Interact();
         }
+        else State = States.work;
     }
     private void CheckFall() //проверка падения
     {
         isFall = rb.linearVelocity.y < 0;
-        //if (!isGrounded && isFall) State = States.fall;
+        if (!isGrounded && isFall) State = States.fall;
     }
     private void CheckGround() //проверка земли под ногами
     {
         isGrounded = Physics2D.OverlapCircle(transform.position, 0.1f, wallsLayer);
-        //if (!isGrounded && !isFall) State = States.jump;
+        if (!isGrounded && !isFall) State = States.jump;
     }
     private void Run()//функция бега
     {
-        //if (isGrounded) State = States.run;
+        if (speed != 0) State = States.run;
         direction = Input.GetAxisRaw("Horizontal");
 
         if (direction != 0)
@@ -113,12 +115,12 @@ public class Player : MonoBehaviour
         }
     }
 
-    /*public enum States //состояния героя
+    public enum States //состояния героя
     {
         idle,
         run,
         jump,
         fall,
         work
-    }*/
+    }
 }

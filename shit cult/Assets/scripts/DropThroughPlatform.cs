@@ -42,7 +42,7 @@ public class DropThroughPlatform : MonoBehaviour
     {
         Physics2D.IgnoreCollision(playerCollider, currentPlatform, true);
         currentPlatform_bufffer = currentPlatform;
-        yield return new WaitForSeconds(0.4f); // время, пока игрок проходит
+        yield return new WaitForSeconds(0.6f); // время, пока игрок проходит
         Physics2D.IgnoreCollision(playerCollider, currentPlatform_bufffer, false);
     }
 }

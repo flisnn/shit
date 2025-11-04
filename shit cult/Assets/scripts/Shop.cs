@@ -102,6 +102,7 @@ public class ShopManager : MonoBehaviour
                 int shopIndex = currentOrderIndices.IndexOf(playerItemIdx);
 
                 Debug.Log($"✅ Магазин принял товар {playerItemIdx} (позиция в заказе: {shopIndex})");
+                if (playerItemIdx < 2) ScoreManagerTMP.Instance.AddScore(50); else ScoreManagerTMP.Instance.AddScore(150);
                 gg = true;
                 // Удаляем визуальный объект над магазином
                 if (shopIndex >= 0 && shopIndex < currentItems.Count)

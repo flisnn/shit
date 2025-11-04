@@ -20,6 +20,8 @@ public class Boss : MonoBehaviour
     [SerializeField] public float animcooldown = 10f;
     private float cool = 0;
     float currentTime = 0f;
+    public Vector3 offset = new Vector3(0.5f, 0, 0);
+    [SerializeField] public GameObject spawninfo;
 
     private List<System.Func<bool>> conditions = new List<System.Func<bool>>();
     private List<System.Func<bool>> conditionsglobal = new List<System.Func<bool>>();
@@ -117,6 +119,9 @@ public class Boss : MonoBehaviour
                 int randomIndex = Random.Range(0, conditions.Count);
                 uiText.text = $"Условие: \n{conditionDescriptions[randomIndex]}";
                 cool = cooldown;
+                if (randomIndex == 3) BedScript.done = false;
+                if (randomIndex == 4) CabinetScript.done = false;
+                if (randomIndex == 5) WardrodeScript.done = false;
                 yield return new WaitForSeconds(cooldown);
                 cool = 0;
                 currentTime = 0f;
@@ -127,6 +132,7 @@ public class Boss : MonoBehaviour
                 if (result)
                 {
                     Debug.Log("Условие выполнено!");
+                    ScoreManagerTMP.Instance.AddScore(200);
                     AnimFinger();
                     uiText.text = $" ";
                 }
@@ -142,6 +148,9 @@ public class Boss : MonoBehaviour
                     Debug.Log($"число{randomValue}");
                 }
                 uiText.text = $"хочу такую башню";
+                foreach (int n in inventory) {
+                    GameObject newItem = Instantiate(allItems[n], spawninfo.transform.position + offset * n, Quaternion.identity);
+                    }
                 cool = cooldownglobal;
                 yield return new WaitForSeconds(cooldownglobal);
                 cool = 0;
@@ -150,6 +159,7 @@ public class Boss : MonoBehaviour
                 if (inventory.SequenceEqual(indices))
                 {
                     Debug.Log("Условие выполнено!");
+                    ScoreManagerTMP.Instance.AddScore(500);
                     AnimFinger();
                     uiText.text = $" ";
                 }
